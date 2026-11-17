@@ -13,6 +13,10 @@ steps and the checksums for each version.
 
 ## [Unreleased]
 
+### Added
+
+- **Physical keyboard support in streams:** a Starwire Physical Keyboard Service accessibility service forwards hardware keys to the PC while the stream window is focused, so keys like Win, Alt+Tab and Esc act on the PC instead of triggering Android shortcuts.
+
 ## [0.3.0] - 2026-11-16
 
 ### Added

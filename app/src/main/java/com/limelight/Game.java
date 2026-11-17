@@ -179,6 +179,25 @@ public class Game extends Activity implements SurfaceHolder.Callback,
     private volatile boolean launchFailureShown = false;
     private boolean connecting = false;
     private boolean connected = false;
+
+    // The currently running stream activity, if any. Set in onCreate, cleared
+    // in onStop. Used by KeyboardAccessibilityService to forward physical
+    // keyboard keys to the host.
+    public static Game instance = null;
+
+    // True while this activity's window has focus. The keyboard accessibility
+    // service only forwards keys while this is true, so keys typed in other
+    // apps after switching away mid-stream are never sent to the PC.
+    private static volatile boolean windowFocused = false;
+
+    public static boolean isStreamForeground() {
+        return windowFocused;
+    }
+
+    public boolean isConnected() {
+        return connected;
+    }
+
     private boolean userInitiatedDisconnect = false;
     private boolean autoEnterPip = false;
     private boolean surfaceCreated = false;
@@ -328,6 +347,8 @@ public class Game extends Activity implements SurfaceHolder.Callback,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        instance = this;
 
         UiHelper.setLocale(this);
 
@@ -1066,6 +1087,10 @@ public class Game extends Activity implements SurfaceHolder.Callback,
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
 
+        // Focus gate for KeyboardAccessibilityService: keys are only forwarded
+        // to the PC while this window has focus.
+        windowFocused = hasFocus;
+
         // We can't guarantee the state of modifiers keys which may have
         // lifted while focus was not on us. Clear the modifier state.
         this.modifierFlags = 0;
@@ -1454,6 +1479,8 @@ public class Game extends Activity implements SurfaceHolder.Callback,
     @Override
     protected void onStop() {
         super.onStop();
+
+        instance = null;
 
         SpinnerDialog.closeDialogs(this);
         Dialog.closeDialogs(this);

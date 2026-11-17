@@ -592,6 +592,8 @@
     <string name="summary_checkbox_sticky_modifier_keys">On the on-screen full keyboard, long-press Ctrl, Alt, Shift or Win to hold it down; tap it again to let go</string>
     <string name="title_seekbar_keyboard_opacity">On-screen full keyboard opacity</string>
     <string name="summary_seekbar_keyboard_opacity">How see-through the on-screen full keyboard is</string>
+    <string name="keyboard_service_label">Starwire Physical Keyboard Service</string>
+    <string name="accessibility_description_text">These permissions are only used to detect when buttons are pressed so they can be sent to PC without triggering default action on your device.\n\nStarwire does NOT observe the text you type and does NOT collect your passwords, credit card numbers or any other information.</string>
     <string name="title_checkbox_smart_clipboard_sync">Automatic clipboard sync</string>
     <string name="summary_checkbox_smart_clipboard_sync">Send this device\'s clipboard to the PC when the stream starts or you return to it, and copy the PC\'s clipboard here when you leave the stream. Needs clipboard permission for this device in Vibepollo.</string>
     <string name="title_checkbox_smart_clipboard_sync_toast">Show clipboard sync messages</string>
