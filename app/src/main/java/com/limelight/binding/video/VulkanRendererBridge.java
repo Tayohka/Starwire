@@ -229,6 +229,16 @@ public class VulkanRendererBridge {
         }
     }
 
+    /**
+     * Changes the sharpening strength live. The next presented frame uses it;
+     * 0 is off. No-op when the renderer is gone.
+     */
+    public void setSharpenStrength(float strength) {
+        if (handle != 0) {
+            nativeSetSharpenStrength(handle, strength);
+        }
+    }
+
     /** Frames presented since the last call */
     public int takePresentedFrames() {
         return handle != 0 ? nativeTakePresentedFrames(handle) : 0;
@@ -295,6 +305,7 @@ public class VulkanRendererBridge {
     private static native void nativeNoteReceived(long handle, long hostPtsUs, long receiveTimeUs, long enqueueTimeUs,
                                                   char hostProcessingLatency);
     private static native void nativeSetHdrMode(long handle, boolean enabled, byte[] hdrMetadata);
+    private static native void nativeSetSharpenStrength(long handle, float strength);
     private static native int nativeTakePresentedFrames(long handle);
     private static native long nativeTakeDecodedNs(long handle);
     private static native String nativeGetRendererText(long handle);

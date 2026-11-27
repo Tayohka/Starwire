@@ -65,6 +65,7 @@ public class OverlayMenuView extends LinearLayout {
         void onShowKeyboard();
         void onSendGuideButton();
         void onShowBrightness();
+        void onShowSharpening();
         void onCustomCommand(CustomCommand command);
         void onMenuClosed();
 
@@ -254,6 +255,7 @@ public class OverlayMenuView extends LinearLayout {
     private static final int ACTION_BITRATE = 21;
     private static final int ACTION_FIX_HOST_CURSOR = 22;
     private static final int ACTION_BRIGHTNESS = 23;
+    private static final int ACTION_SHARPENING = 26;
     private static final int ACTION_USB_DEVICES = 24;
     private static final int ACTION_NONE = 25;
     private static final int ACTION_USB_BASE = 1000;
@@ -266,6 +268,8 @@ public class OverlayMenuView extends LinearLayout {
     private boolean flipFaceButtons = false;
     // Not on TVs, whose screen brightness the app can't change
     private boolean showBrightness = true;
+    // Not on the Direct renderer, which has nothing to sharpen
+    private boolean showSharpening = true;
 
     public OverlayMenuView(Context context) {
         super(context);
@@ -579,6 +583,11 @@ public class OverlayMenuView extends LinearLayout {
                 addTile(R.drawable.ic_overlay_settings_brightness,
                     getContext().getString(R.string.overlay_menu_brightness), ACTION_BRIGHTNESS);
             }
+            // Sharpening, live: the slider it opens changes the picture as it moves
+            if (showSharpening) {
+                addTile(R.drawable.ic_overlay_contrast,
+                    getContext().getString(R.string.overlay_menu_sharpening), ACTION_SHARPENING);
+            }
             if (usbDevicesShown) {
                 addTile(R.drawable.ic_overlay_usb,
                     getContext().getString(R.string.overlay_menu_usb_devices), ACTION_USB_DEVICES);
@@ -757,6 +766,10 @@ public class OverlayMenuView extends LinearLayout {
 
     public void setShowBrightness(boolean show) {
         this.showBrightness = show;
+    }
+
+    public void setShowSharpening(boolean show) {
+        this.showSharpening = show;
     }
 
     @Override
@@ -1087,6 +1100,11 @@ public class OverlayMenuView extends LinearLayout {
                 // Closed first, so the slider gets the controller and remote input
                 closeMenu();
                 actionListener.onShowBrightness();
+                return;
+            } else if (action == ACTION_SHARPENING) {
+                // Closed first, so the slider dialog shows the stream behind it
+                closeMenu();
+                actionListener.onShowSharpening();
                 return;
             } else if (action == ACTION_CLOSE) {
                 closeMenu();

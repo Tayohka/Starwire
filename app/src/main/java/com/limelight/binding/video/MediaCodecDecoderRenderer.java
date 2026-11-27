@@ -1641,6 +1641,24 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer implements C
         }
     }
 
+    /**
+     * Changes the sharpening strength live, in percent, 0 to 100. The next presented
+     * frame uses it. Only the Vulkan renderer sharpens, so this does nothing on the
+     * Direct renderer. Also remembers the value, so a later stream starts with it.
+     */
+    public void setSharpenStrength(int percent) {
+        int clamped = Math.max(0, Math.min(100, percent));
+        prefs.sharpening = clamped;
+        if (vulkanRenderer != null) {
+            vulkanRenderer.setSharpenStrength(PreferenceConfiguration.sharpeningToStrength(clamped));
+        }
+    }
+
+    /** Whether the live sharpening control can do anything in this stream */
+    public boolean isVulkanRenderer() {
+        return vulkanRenderer != null;
+    }
+
     @Override
     public void setHdrMode(boolean enabled, byte[] hdrMetadata) {
         // The Vulkan renderer switches its output between SDR and HDR10 itself

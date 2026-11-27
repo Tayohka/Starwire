@@ -465,6 +465,9 @@
     <string name="overlay_menu_disconnect">Disconnect</string>
     <string name="overlay_menu_quit_session">Quit Session</string>
     <string name="overlay_menu_brightness">Brightness</string>
+    <string name="overlay_menu_sharpening">Sharpening</string>
+    <string name="sharpening_dialog_title">Sharpening (now %1$d%%)</string>
+    <string name="sharpening_needs_vulkan">Sharpening needs the Vulkan renderer</string>
     <string name="overlay_menu_toggle_stats">Stats (RB)</string>
     <string name="overlay_menu_mouse_emulation">Mouse (X)</string>
     <string name="overlay_menu_keyboard">Keyboard (Y)</string>

@@ -53,4 +53,19 @@ public class SharpeningSettingTest {
         assertEquals(0, readWithSharpening(-1).sharpening);
         assertEquals(100, readWithSharpening(101).sharpening);
     }
+
+    // The in-stream slider saves what it set, so the next stream starts with it
+    @Test
+    public void sharpeningSavesTheLiveValue() {
+        PreferenceConfiguration.setSharpening(context, 60);
+        assertEquals(60, PreferenceConfiguration.readPreferences(context).sharpening);
+    }
+
+    @Test
+    public void sharpeningSaveClampsOutOfRangeValues() {
+        PreferenceConfiguration.setSharpening(context, -5);
+        assertEquals(0, PreferenceConfiguration.readPreferences(context).sharpening);
+        PreferenceConfiguration.setSharpening(context, 150);
+        assertEquals(100, PreferenceConfiguration.readPreferences(context).sharpening);
+    }
 }

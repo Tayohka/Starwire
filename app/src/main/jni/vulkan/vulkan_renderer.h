@@ -110,6 +110,10 @@ public:
 
     void setHdrMode(bool enabled, const uint8_t* metadata, size_t metadataLength);
 
+    // Changes the sharpening strength live, from the in-stream menu. The next
+    // presented frame uses it; 0 is off. Safe to call from any thread.
+    void setSharpenStrength(float strength);
+
     // Network timing of a frame, for pacer traces
     bool tracing();
     void noteReceived(int64_t hostPtsNs, int64_t receiveNs, int64_t enqueueNs, int64_t hostProcessingNs);

@@ -808,7 +808,7 @@ The menu itself, its quick actions and custom commands come from Moonlight X
 | Feature | Source |
 | --- | --- |
 | Vulkan renderer with host frame timing, PyroWave codec | From Moonlight X (MoreOrLessSoftware) |
-| Sharpening, a slider in Settings under Video (Vulkan renderer only, off by default) | New in Starwire, using AMD FidelityFX RCAS |
+| Sharpening, a slider in Settings under Video and a tile in the stream menu that adjusts it live, over the stream (Vulkan renderer only, off by default) | New in Starwire, using AMD FidelityFX RCAS |
 | From 0.2.1: custom resolutions and frame rates. A Custom button in the resolution and frame rate lists takes any size up to 7680x4320 and any frame rate, in Settings and per game. It replaces Unlock FPS, and a saved value the device doesn't list is kept instead of being reset. Not yet tried in a stream with Starwire | From Moonlight X (MoreOrLessSoftware) |
 | Custom Vulkan driver (Turnip) for PyroWave: experimental and off by default, and not yet tried with a real Turnip driver | Ported from Moonlight X Turnip (ncpt / NoCrypt), uses libadrenotools (Billy Laws / bylaws). The libadrenotools libraries in the repo were built from the upstream commit in `SOURCE`, not copied from the fork. Starwire refuses files that aren't 64-bit ARM libraries, and goes back to the system driver when one can't load or can't run PyroWave (tested with a broken file, not a real driver) |
 | Warp Drive / Warp 2 frame pacing (2x / 4x FPS from the PC, newest frame shown) | Ported from Artemis (Yukino Song), via Artemide |

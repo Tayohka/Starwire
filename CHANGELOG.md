@@ -19,6 +19,8 @@ steps and the checksums for each version.
 
 - **Sharpening in streams:** a Sharpening slider in Settings under Video sharpens the streamed picture to counteract compression softness. It uses AMD FidelityFX RCAS, works in the Vulkan renderer only, and is off by default. Not yet tried in a stream.
 
+- **A Sharpening tile in the stream menu:** it opens a slider over the stream, so the picture changes as it moves, with no restart. The value is saved, so the next stream starts with it. It only shows on the Vulkan renderer. Not yet tried in a stream.
+
 ## [0.3.0] - 2026-11-16
 
 ### Added

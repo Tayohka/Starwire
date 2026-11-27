@@ -596,6 +596,13 @@ public class PreferenceConfiguration {
         return percent / 100.0f;
     }
 
+    /** Saves the Sharpening slider, in percent, 0 to 100, for the next stream. */
+    public static void setSharpening(Context context, int percent) {
+        int clamped = Math.max(0, Math.min(100, percent));
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+                .putInt(SHARPENING_PREF_STRING, clamped).apply();
+    }
+
     private static int getSharpeningValue(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 

@@ -977,6 +977,16 @@ void VulkanRenderer::setHdrMode(bool enabled, const uint8_t* metadata, size_t me
     wake(kWakeHdr);
 }
 
+void VulkanRenderer::setSharpenStrength(float strength) {
+    // Clamped, so a bad value from the menu can't push the shader past either end
+    float clamped = std::clamp(strength, 0.0f, 1.0f);
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        config_.sharpenStrength = clamped;
+    }
+    ALOGI("Sharpening strength %.2f", static_cast<double>(clamped));
+}
+
 std::string VulkanRenderer::rendererText() {
     std::lock_guard<std::mutex> lock(mutex_);
 
@@ -1565,8 +1575,12 @@ bool VulkanRenderer::renderFrame(const FramePtr& frame, uint64_t presentId, int6
     pc.params2[1] = static_cast<float>(std::max(quarterTurns(preTransform_), 0));
     // Sharpening strength and one source texel in each direction, for the
     // neighbour samples in the fragment shader. At zero strength the shader
-    // skips those samples entirely.
-    pc.params3[0] = config_.sharpenStrength;
+    // skips those samples entirely. Read under the lock, since the in-stream
+    // menu can change it on another thread while a frame is being presented.
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        pc.params3[0] = config_.sharpenStrength;
+    }
     pc.params3[1] = 1.0f / bufferWidth;
     pc.params3[2] = 1.0f / bufferHeight;
     pc.params3[3] = 0.0f;

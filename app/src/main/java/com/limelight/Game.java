@@ -111,6 +111,7 @@ import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -3627,6 +3628,11 @@ public class Game extends Activity implements SurfaceHolder.Callback,
      * Setup overlay menu and its listeners
      */
     private void setupOverlayMenu() {
+        // The Sharpening tile only shows on the Vulkan renderer, which is the
+        // only one that sharpens
+        overlayMenuView.setShowSharpening(decoderRenderer != null
+                && "Vulkan".equals(decoderRenderer.getRendererName()));
+
         // Set up the overlay menu listener for select button hold detection
         controllerHandler.setOverlayMenuListener(new ControllerHandler.OverlayMenuListener() {
             @Override
@@ -3699,6 +3705,11 @@ public class Game extends Activity implements SurfaceHolder.Callback,
             @Override
             public void onShowBrightness() {
                 brightnessSliderView.showForController(() -> streamView.requestFocus());
+            }
+
+            @Override
+            public void onShowSharpening() {
+                showSharpeningDialog();
             }
 
             @Override
@@ -3822,6 +3833,64 @@ public class Game extends Activity implements SurfaceHolder.Callback,
 
     // Changes the bitrate mid-stream through the menu; made the first time the picker opens
     private BitrateChanger bitrateChanger;
+
+    /**
+     * The Sharpening slider, from the in-stream menu. It sits over the stream, so the
+     * picture changes as it moves, with no restart. The value is saved, so the next
+     * stream starts with it.
+     */
+    private void showSharpeningDialog() {
+        if (decoderRenderer == null || !decoderRenderer.isVulkanRenderer()) {
+            Toast.makeText(this, R.string.sharpening_needs_vulkan, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int current = prefConfig.sharpening;
+        float density = getResources().getDisplayMetrics().density;
+        int pad = (int) (24 * density);
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(pad, pad, pad, pad);
+
+        TextView valueText = new TextView(this);
+        valueText.setText(getString(R.string.sharpening_dialog_title, current));
+        valueText.setGravity(Gravity.CENTER_HORIZONTAL);
+        layout.addView(valueText);
+
+        SeekBar slider = new SeekBar(this);
+        slider.setMax(100);
+        slider.setProgress(current);
+        layout.addView(slider);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.title_seekbar_sharpening)
+                .setView(layout)
+                .setPositiveButton(android.R.string.ok, (d, which) -> streamView.requestFocus())
+                .create();
+
+        slider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    decoderRenderer.setSharpenStrength(progress);
+                    PreferenceConfiguration.setSharpening(Game.this, progress);
+                }
+                valueText.setText(getString(R.string.sharpening_dialog_title, progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+        dialog.setOnDismissListener(d -> streamView.requestFocus());
+        dialog.show();
+    }
 
     /**
      * Change the bitrate without reconnecting (Moonlight V+ feature, Vibepollo's /bitrate). The
