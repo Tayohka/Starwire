@@ -65,7 +65,9 @@ public class OverlayMenuView extends LinearLayout {
         void onShowKeyboard();
         void onSendGuideButton();
         void onShowBrightness();
-        void onShowSharpening();
+        // Optional: only Game opens the slider. The test listeners don't need it.
+        default void onShowSharpening() {
+        }
         void onCustomCommand(CustomCommand command);
         void onMenuClosed();
 
