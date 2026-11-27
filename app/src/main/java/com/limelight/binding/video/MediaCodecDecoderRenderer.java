@@ -674,6 +674,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer implements C
 
         VulkanRendererBridge renderer = VulkanRendererBridge.create(outputSurface,
                 initialWidth, initialHeight, refreshRate, prefs.framePacing, prefs.jitterBuffer, ditherMode,
+                PreferenceConfiguration.sharpeningToStrength(prefs.sharpening),
                 getPreferredColorSpace(),
                 getPreferredColorRange() == MoonBridge.COLOR_RANGE_FULL,
                 (videoFormat & MoonBridge.VIDEO_FORMAT_MASK_10BIT) != 0,

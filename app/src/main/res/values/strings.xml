@@ -399,6 +399,10 @@
     <string name="title_spatial_dithering">Spatial Dithering</string>
     <string name="summary_spatial_dithering">Adds fine moving noise that hides color banding, most visible in HDR gradients (Vulkan renderer only)</string>
 
+    <string name="title_seekbar_sharpening">Sharpening</string>
+    <string name="summary_seekbar_sharpening">Sharpens the streamed picture to counteract compression softness. Vulkan renderer only.</string>
+    <string name="suffix_seekbar_sharpening">%</string>
+
     <string name="title_frame_pacing">Video frame pacing</string>
     <string name="summary_frame_pacing">Specify how to balance video latency and smoothness</string>
     <string name="pacing_latency">Prefer lowest latency</string>
@@ -924,6 +928,7 @@
     <string name="impact_video_renderer">Vulkan paces frames more evenly for a small GPU cost. Direct has the least overhead.</string>
     <string name="impact_custom_vulkan_driver">Experimental and not yet tried with a real Turnip driver. A bad driver can close Starwire.</string>
     <string name="impact_spatial_dithering">Small GPU cost. No change to latency.</string>
+    <string name="impact_sharpening">Small GPU cost. No change to latency.</string>
     <string name="impact_hdr">Uses 10-bit video, which needs hardware HEVC or AV1 decoding. Slower devices may take longer per frame.</string>
     <string name="impact_perf_overlay">Very small. Lite mode draws less.</string>
 

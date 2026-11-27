@@ -132,6 +132,7 @@ public class PreferenceConfiguration {
     private static final String AUTO_RESUME_STREAM_PREF_STRING = "checkbox_auto_resume_stream";
     private static final String VIDEO_RENDERER_PREF_STRING = "video_renderer";
     private static final String SPATIAL_DITHERING_PREF_STRING = "spatial_dithering";
+    private static final String SHARPENING_PREF_STRING = "seekbar_sharpening";
     private static final String JITTER_BUFFER_PREF_STRING = "jitter_buffer";
     private static final String PYROWAVE_LATE_FRAMES_PREF_STRING = "pyrowave_late_frames";
     static final String CUSTOM_VULKAN_DRIVER_PREF_STRING = "checkbox_custom_vulkan_driver";
@@ -158,6 +159,7 @@ public class PreferenceConfiguration {
     private static final String DEFAULT_VIDEO_FORMAT = "auto";
     private static final String DEFAULT_VIDEO_RENDERER = "auto";
     private static final String DEFAULT_SPATIAL_DITHERING = "off";
+    private static final int DEFAULT_SHARPENING = 0;
     private static final String DEFAULT_JITTER_BUFFER = "balanced";
     private static final String DEFAULT_PYROWAVE_LATE_FRAMES = "balanced";
     private static final boolean DEFAULT_CUSTOM_VULKAN_DRIVER = false;
@@ -248,6 +250,8 @@ public class PreferenceConfiguration {
     public FormatOption videoFormat;
     public VideoRendererOption videoRenderer;
     public SpatialDitheringOption spatialDithering;
+    // Sharpening strength in percent, 0 to 100; 0 is off
+    public int sharpening;
     public int deadzonePercentage;
     public int oscOpacity;
     public boolean stretchVideo, enableSops, playHostAudio, disableWarnings;
@@ -579,6 +583,30 @@ public class PreferenceConfiguration {
         else {
             return SpatialDitheringOption.OFF;
         }
+    }
+
+    /** Sharpening strength 0 to 1 for the Vulkan renderer, from the 0 to 100 setting. */
+    public static float sharpeningToStrength(int percent) {
+        if (percent <= 0) {
+            return 0.0f;
+        }
+        if (percent >= 100) {
+            return 1.0f;
+        }
+        return percent / 100.0f;
+    }
+
+    private static int getSharpeningValue(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        int percent = prefs.getInt(SHARPENING_PREF_STRING, DEFAULT_SHARPENING);
+        if (percent < 0) {
+            return 0;
+        }
+        if (percent > 100) {
+            return 100;
+        }
+        return percent;
     }
 
     private static int getPyrowaveLateFramesValue(Context context) {
@@ -960,6 +988,7 @@ public class PreferenceConfiguration {
         config.videoFormat = getVideoFormatValue(context);
         config.videoRenderer = getVideoRendererValue(context);
         config.spatialDithering = getSpatialDitheringValue(context);
+        config.sharpening = getSharpeningValue(context);
         config.framePacing = getFramePacingValue(context);
         config.warpFactor = warpFactorFor(prefs.getString(FRAME_PACING_PREF_STRING, DEFAULT_FRAME_PACING));
         config.jitterBuffer = getJitterBufferValue(context);

@@ -64,6 +64,7 @@ public final class SettingsImpact {
         IMPACT.put("video_renderer", R.string.impact_video_renderer);
         IMPACT.put("checkbox_custom_vulkan_driver", R.string.impact_custom_vulkan_driver);
         IMPACT.put("spatial_dithering", R.string.impact_spatial_dithering);
+        IMPACT.put("seekbar_sharpening", R.string.impact_sharpening);
         IMPACT.put("checkbox_enable_hdr", R.string.impact_hdr);
         IMPACT.put("checkbox_full_range", R.string.impact_none);
         IMPACT.put("checkbox_enable_perf_overlay", R.string.impact_perf_overlay);

@@ -17,6 +17,8 @@ steps and the checksums for each version.
 
 - **Physical keyboard support in streams:** a Starwire Physical Keyboard Service accessibility service forwards hardware keys to the PC while the stream window is focused, so keys like Win, Alt+Tab and Esc act on the PC instead of triggering Android shortcuts.
 
+- **Sharpening in streams:** a Sharpening slider in Settings under Video sharpens the streamed picture to counteract compression softness. It uses AMD FidelityFX RCAS, works in the Vulkan renderer only, and is off by default. Not yet tried in a stream.
+
 ## [0.3.0] - 2026-11-16
 
 ### Added

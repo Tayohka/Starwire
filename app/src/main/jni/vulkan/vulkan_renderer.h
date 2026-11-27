@@ -30,6 +30,7 @@ struct RendererConfig {
     int framePacing = 0;       // PreferenceConfiguration.FRAME_PACING_*
     int jitterBuffer = 1;      // PreferenceConfiguration.JITTER_BUFFER_*
     int ditherMode = 0;        // 0 = off, 1 = low, 2 = high
+    float sharpenStrength = 0.0f;  // 0 to 1, from the Sharpening setting; 0 is off
     int colorspace = 1;        // MoonBridge.COLORSPACE_*
     bool fullRange = false;
     bool tenBit = false;       // The stream is 10-bit

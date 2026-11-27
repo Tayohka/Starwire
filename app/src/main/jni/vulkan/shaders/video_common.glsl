@@ -7,6 +7,7 @@ layout(push_constant) uniform PushConstants {
     vec4 uvClamp;
     vec4 params;   // x = dither amplitude, y = frame counter, z = output mode, w = content peak nits
     vec4 params2;  // x = SDR reference white nits, y = quarter turns clockwise to pre-rotate by
+    vec4 params3;  // x = sharpening strength 0 to 1, y = one source texel in U, z = one source texel in V
     vec4 ycbcr;    // Planar video: x = Kr, y = Kb, z = chroma midpoint, w = chroma U offset
 } pc;
 
@@ -50,6 +51,32 @@ vec3 pqToSdr(vec3 e) {
     }
 
     return pow(clamp(lin, 0.0, 1.0), vec3(1.0 / 2.2));
+}
+
+// Robust Contrast Adaptive Sharpening, from AMD FidelityFX Super Resolution 1.0
+// (Copyright (c) 2021 Advanced Micro Devices, Inc., MIT licence; see
+// app/src/main/assets/licenses/fidelityfx-rcas.txt). The full CAS filter is a
+// compute shader, and this renderer draws one fragment per output pixel, so it
+// uses RCAS instead: the same lobe idea, with a five tap cross instead of the
+// full 3x3 neighbourhood. Meta's compositor sharpening is built on RCAS too.
+// b, d, f, h are the neighbours one source texel up, left, right and down, e is
+// the centre. The lobe is worked out from luma only, and one weight scales all
+// three channels, so hues do not shift. Sharpness 0 to 1, peak neighbour weight
+// -1/8 at full strength. Flat areas come out unchanged: when every sample is
+// the same colour the weights sum to one. Only call this when sharpness is
+// above zero; at zero the caller skips the neighbour samples entirely.
+vec3 rcasSharpen(vec3 b, vec3 d, vec3 e, vec3 f, vec3 h, float sharpness) {
+    const vec3 lumaWeights = vec3(0.2126, 0.7152, 0.0722);
+    float mn = min(min(dot(b, lumaWeights), dot(d, lumaWeights)),
+                   min(dot(e, lumaWeights), min(dot(f, lumaWeights), dot(h, lumaWeights))));
+    float mx = max(max(dot(b, lumaWeights), dot(d, lumaWeights)),
+                   max(dot(e, lumaWeights), max(dot(f, lumaWeights), dot(h, lumaWeights))));
+    // How far the neighbourhood is from black and white, softened by a square
+    // root so the amount does not flicker frame to frame.
+    float lobe = max(min(mn, 2.0 - mx) / max(mx, 1e-4), 0.0);
+    lobe = sqrt(lobe);
+    float w = lobe * (-0.125 * sharpness);
+    return (b * w + d * w + f * w + h * w + e) / (1.0 + 4.0 * w);
 }
 
 vec4 outputColor(vec3 color) {

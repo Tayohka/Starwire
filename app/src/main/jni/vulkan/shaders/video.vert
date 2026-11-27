@@ -6,6 +6,7 @@ layout(push_constant) uniform PushConstants {
     vec4 uvClamp;  // xy = min UV, zw = max UV (half a texel inside the crop)
     vec4 params;   // x = dither amplitude, y = frame counter, z = output mode, w = content peak nits
     vec4 params2;  // x = SDR reference white nits, y = quarter turns clockwise to pre-rotate by
+    vec4 params3;  // x = sharpening strength 0 to 1, y = one source texel in U, z = one source texel in V
     vec4 ycbcr;    // Used by the planar fragment shader
 } pc;
 

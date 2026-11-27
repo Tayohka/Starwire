@@ -46,6 +46,26 @@ public class PreferenceConfigurationTest {
         assertEquals(1, PreferenceConfiguration.warpFactorFor(null));
     }
 
+    // Sharpening: the 0 to 100 slider maps straight onto the 0 to 1 strength the
+    // Vulkan renderer takes, and a value saved some other way can't push it
+    // past either end
+    @Test
+    public void sharpeningStrengthMapping() {
+        assertEquals(0.0f, PreferenceConfiguration.sharpeningToStrength(0), 0.0f);
+        assertEquals(0.25f, PreferenceConfiguration.sharpeningToStrength(25), 0.0f);
+        assertEquals(0.5f, PreferenceConfiguration.sharpeningToStrength(50), 0.0f);
+        assertEquals(0.75f, PreferenceConfiguration.sharpeningToStrength(75), 0.0f);
+        assertEquals(1.0f, PreferenceConfiguration.sharpeningToStrength(100), 0.0f);
+    }
+
+    @Test
+    public void sharpeningStrengthClampsOutOfRange() {
+        assertEquals(0.0f, PreferenceConfiguration.sharpeningToStrength(-1), 0.0f);
+        assertEquals(0.0f, PreferenceConfiguration.sharpeningToStrength(Integer.MIN_VALUE), 0.0f);
+        assertEquals(1.0f, PreferenceConfiguration.sharpeningToStrength(101), 0.0f);
+        assertEquals(1.0f, PreferenceConfiguration.sharpeningToStrength(Integer.MAX_VALUE), 0.0f);
+    }
+
     // The preset sizes in the resolution list aren't "native"; anything else, including a
     // portrait preset, is the device's own size
     @Test

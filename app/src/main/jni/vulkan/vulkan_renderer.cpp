@@ -34,6 +34,7 @@ namespace {
         float uvClamp[4];
         float params[4];
         float params2[4];
+        float params3[4];
         float ycbcr[4];
     };
 
@@ -517,10 +518,10 @@ bool VulkanRenderer::init(ANativeWindow* output) {
 
     char configuration[256];
     snprintf(configuration, sizeof(configuration),
-             "mode=%d,jitterBuffer=%d,presentAhead=%d,streamFps=%d,width=%d,height=%d,periodNs=%lld,refreshHz=%.3f,tenBit=%d,dither=%d",
+             "mode=%d,jitterBuffer=%d,presentAhead=%d,streamFps=%d,width=%d,height=%d,periodNs=%lld,refreshHz=%.3f,tenBit=%d,dither=%d,sharpen=%.2f",
              config_.framePacing, config_.jitterBuffer, presentAhead_ ? 1 : 0, config_.streamFps, config_.streamWidth, config_.streamHeight,
              static_cast<long long>(pacer_.vsyncPeriodNs()), config_.displayRefreshHz, config_.tenBit ? 1 : 0,
-             config_.ditherMode);
+             config_.ditherMode, static_cast<double>(config_.sharpenStrength));
     trace_.start(config_.traceDirectory, configuration);
     traceRecording_ = trace_.recording();
 
@@ -1562,6 +1563,13 @@ bool VulkanRenderer::renderFrame(const FramePtr& frame, uint64_t presentId, int6
     pc.params[3] = contentPeakNits;
     pc.params2[0] = kSdrWhiteNits;
     pc.params2[1] = static_cast<float>(std::max(quarterTurns(preTransform_), 0));
+    // Sharpening strength and one source texel in each direction, for the
+    // neighbour samples in the fragment shader. At zero strength the shader
+    // skips those samples entirely.
+    pc.params3[0] = config_.sharpenStrength;
+    pc.params3[1] = 1.0f / bufferWidth;
+    pc.params3[2] = 1.0f / bufferHeight;
+    pc.params3[3] = 0.0f;
     if (planar) {
         // PyroWave is always full range, in the colorspace we asked for, or BT.2020 for HDR
         const int colorspace = hdrActive_ ? 2 : config_.colorspace;
