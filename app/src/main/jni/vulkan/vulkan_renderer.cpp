@@ -419,6 +419,7 @@ std::unique_ptr<VulkanRenderer> VulkanRenderer::create(ANativeWindow* output, co
 VulkanRenderer::VulkanRenderer(const NdkApi* ndk, const RendererConfig& config)
     : ndk_(ndk),
       config_(config),
+      sharpenStrength_(config.sharpenStrength),
       pacer_(static_cast<PacingMode>(config.framePacing), config.streamFps,
              config.displayRefreshHz > 1.0f ? static_cast<int64_t>(1e9 / config.displayRefreshHz) : 16'666'667,
              static_cast<JitterBuffer>(config.jitterBuffer)) {
@@ -982,7 +983,7 @@ void VulkanRenderer::setSharpenStrength(float strength) {
     float clamped = std::clamp(strength, 0.0f, 1.0f);
     {
         std::lock_guard<std::mutex> lock(mutex_);
-        config_.sharpenStrength = clamped;
+        sharpenStrength_ = clamped;
     }
     ALOGI("Sharpening strength %.2f", static_cast<double>(clamped));
 }
@@ -1579,7 +1580,7 @@ bool VulkanRenderer::renderFrame(const FramePtr& frame, uint64_t presentId, int6
     // menu can change it on another thread while a frame is being presented.
     {
         std::lock_guard<std::mutex> lock(mutex_);
-        pc.params3[0] = config_.sharpenStrength;
+        pc.params3[0] = sharpenStrength_;
     }
     pc.params3[1] = 1.0f / bufferWidth;
     pc.params3[2] = 1.0f / bufferHeight;

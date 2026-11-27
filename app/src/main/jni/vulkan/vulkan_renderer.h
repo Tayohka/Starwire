@@ -373,6 +373,9 @@ private:
 
     // Shared between the image reader callback and the render thread
     std::mutex mutex_;
+    // Live sharpening strength, under mutex_. Kept apart from config_, which
+    // is const: the in-stream menu changes it after the renderer is built.
+    float sharpenStrength_ = 0.0f;
     bool closing_ = false;
     FramePacer pacer_;
     PacerTrace trace_;
