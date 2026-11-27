@@ -270,8 +270,10 @@ public class OverlayMenuView extends LinearLayout {
     private boolean flipFaceButtons = false;
     // Not on TVs, whose screen brightness the app can't change
     private boolean showBrightness = true;
-    // Not on the Direct renderer, which has nothing to sharpen
-    private boolean showSharpening = true;
+    // Not on the Direct renderer, which has nothing to sharpen. Off until Game
+    // turns it on for a Vulkan stream, like Fix PC Cursor and USB devices: the
+    // menu stays 21 tools in three full rows without it.
+    private boolean showSharpening;
 
     public OverlayMenuView(Context context) {
         super(context);

@@ -52,6 +52,8 @@ public class SharpeningTileTest {
 
     private OverlayMenuView newMenu() {
         OverlayMenuView view = new OverlayMenuView(activity);
+        // Game turns the tile on for a Vulkan stream; the menu hides it otherwise
+        view.setShowSharpening(true);
         activity.setContentView(view);
         // Records which of the menu's actions ran, in order
         view.setMenuActionListener((OverlayMenuView.MenuActionListener) Proxy.newProxyInstance(
